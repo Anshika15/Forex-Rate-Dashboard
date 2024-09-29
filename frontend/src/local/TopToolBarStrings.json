@@ -1,4 +1,6 @@
 {
     "fromCurrency": "From Currency",
-    "toCurrency": "To Currency"
+    "toCurrency": "To Currency",
+    "addCard": "Add Card",
+    "deleteAllCards": "Delete All Cards"
 }

@@ -73,13 +73,13 @@ class TopToolbar extends Component {
 
               <Col md="auto">
                 <Button variant="primary" onClick={this.handleAddFxPair}>
-                  Add Card
+                  {topToolBarStrings.addCard}
                 </Button>
               </Col>
 
           <Col md="auto">
             <Button variant="danger" onClick={this.handleDeleteAllFxPairs}>
-              Delete All Cards
+              {topToolBarStrings.deleteAllCards}
             </Button>
           </Col>
         </Row>
