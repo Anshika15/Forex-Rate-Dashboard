@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 import TopToolbar from './components/TopToolBar/TopToolbar';
 import FxPairsList from './components/Dashboard/FxPairsList';
 import { fetchAvailableCurrencies } from './api/currencyApi';
-import { addFxPair, removeFxPairById, swapFxPairById, sortFxPairs, removeAllFxPairs } from './services/FxPairService';
+import { 
+  addFxPair, 
+  removeFxPairById, 
+  swapFxPairById, 
+  sortFxPairs, 
+  removeAllFxPairs, 
+  reloadFxPairById 
+} from './services/FxPairService';
 import { Container, Row, Col } from 'react-bootstrap';
 import SortToolBar from './components/Dashboard/SortToolBar';
 
@@ -10,10 +17,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fxPairs: [],
-      availableCurrencies: [],
-      sortField: 'createdAt',
-      sortDirection: 'asc',
+      fxPairs: [], // List of FX pairs
+      availableCurrencies: [], // List of available currencies from API
+      sortField: 'createdAt', // Default sort field
+      sortDirection: 'asc', // Default sort direction
     };
   }
 
@@ -35,12 +42,16 @@ class App extends Component {
 
   handleRemoveFxPair = (id) => {
     const updatedPairs = removeFxPairById(this.state.fxPairs, id);
-    this.setState({ fxPairs: updatedPairs });
+    this.setState((prevState) => ({
+      fxPairs: sortFxPairs(updatedPairs, prevState.sortField, prevState.sortDirection),
+    }));
   };
 
   handleSwapFxPair = (id) => {
     const updatedPairs = swapFxPairById(this.state.fxPairs, id);
-    this.setState({ fxPairs: updatedPairs });
+    this.setState((prevState) => ({
+      fxPairs: sortFxPairs(updatedPairs, prevState.sortField, prevState.sortDirection),
+    }));
   };
 
   handleSortChange = (sortField) => {
@@ -52,9 +63,18 @@ class App extends Component {
     }));
   };
 
+  // Remove all FX pairs
   handleDeleteAllFxPairs = () => {
     const updatedPairs = removeAllFxPairs(this.state.fxPairs);
-    this.setState({fxPairs : updatedPairs});
+    this.setState({ fxPairs: updatedPairs });
+  };
+
+  // Reload FX pair by ID (refresh rate) and maintain sort order
+  handleReloadFxPair = async (id) => {
+    const updatedPairs = await reloadFxPairById(this.state.fxPairs, id);
+    this.setState((prevState) => ({
+      fxPairs: sortFxPairs(updatedPairs, prevState.sortField, prevState.sortDirection),
+    }));
   };
 
   render() {
@@ -70,7 +90,9 @@ class App extends Component {
             />
           </Col>
         </Row>
-          { fxPairs.length != 0 && 
+
+        {/* Show Sort ToolBar only if there are FX pairs */}
+        { fxPairs.length !== 0 && 
           <Row>
             <Col md="auto mt-4">
               <SortToolBar
@@ -80,16 +102,19 @@ class App extends Component {
               />
             </Col>
           </Row>
-          }
-          <Row>
-            <Col md="auto mt-4">
-              <FxPairsList
-                fxPairs={fxPairs}
-                removeFxPair={this.handleRemoveFxPair}
-                swapFxPair={this.handleSwapFxPair}
-              />
-            </Col>
-          </Row>
+        }
+
+        {/* Display FX Pairs List */}
+        <Row>
+          <Col md="auto mt-4">
+            <FxPairsList
+              fxPairs={fxPairs}
+              removeFxPair={this.handleRemoveFxPair}
+              swapFxPair={this.handleSwapFxPair}
+              reloadFxPair={this.handleReloadFxPair}
+            />
+          </Col>
+        </Row>
       </Container>
     );
   }

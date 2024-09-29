@@ -15,6 +15,10 @@ class TopToolbar extends Component {
     const { fromCurrency, toCurrency } = this.state;
     // if (fromCurrency && toCurrency) {
       this.props.addFxPair(fromCurrency, toCurrency);
+      this.setState({
+        fromCurrency: '',
+        toCurrency: '',
+      });
     // }
   };
 
@@ -32,6 +36,7 @@ class TopToolbar extends Component {
 
   render() {
     const { availableCurrencies } = this.props;
+    const { fromCurrency, toCurrency } = this.state;
     return (
       <div>
         <Container className="bg-light p-3">
@@ -39,7 +44,7 @@ class TopToolbar extends Component {
           <Col md="auto">
                 <Dropdown onSelect={this.handleFromCurrencyChange}>
                   <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
-                    {topToolBarStrings.fromCurrency}
+                  {fromCurrency || topToolBarStrings.fromCurrency}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {availableCurrencies.map((currency) => (
@@ -54,7 +59,7 @@ class TopToolbar extends Component {
               <Col md="auto">
                 <Dropdown onSelect={this.handleToCurrencyChange}>
                   <Dropdown.Toggle variant="outline-secondary" id="dropdown-basic">
-                  {topToolBarStrings.toCurrency}
+                  { toCurrency || topToolBarStrings.toCurrency}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {availableCurrencies.map((currency) => (

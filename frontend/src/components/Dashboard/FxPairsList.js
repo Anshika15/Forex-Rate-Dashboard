@@ -3,7 +3,7 @@ import FxPairCard from './FxPairCard';
 
 class FxPairsList extends Component {
   render() {
-    const { fxPairs, removeFxPair, swapFxPair} = this.props;
+    const { fxPairs, removeFxPair, swapFxPair, reloadFxPair} = this.props;
     return (
       <div>
         <div className="fx-pairs-list">
@@ -13,6 +13,7 @@ class FxPairsList extends Component {
               pair={pair}
               removeFxPair={removeFxPair}
               swapFxPair={swapFxPair}
+              reloadFxPair={reloadFxPair}
             />
           ))}
         </div>

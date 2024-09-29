@@ -20,13 +20,36 @@ export const removeFxPairById = (fxPairs, id) => {
 };
 
 // Function to swap FX pair currencies by ID
-export const swapFxPairById = (fxPairs, id) => {
-  return fxPairs.map(pair => {
-    if (pair.id === id) {
-      return { ...pair, fromCurrency: pair.toCurrency, toCurrency: pair.fromCurrency, updatedAt: new Date() };
-    }
-    return pair;
-  });
+export const swapFxPairById = async (fxPairs, id) => {
+  return Promise.all(
+    fxPairs.map(async (pair) => {
+      if (pair.id === id) {
+        // Swap currencies
+        const newRate = await fetchFxRate(pair.toCurrency, pair.fromCurrency);
+        return {
+          ...pair,
+          fromCurrency: pair.toCurrency,
+          toCurrency: pair.fromCurrency,
+          rate: newRate, // Update the rate for swapped currencies
+          updatedAt: new Date(),
+        };
+      }
+      return pair;
+    })
+  );
+};
+
+// Function to reload the FX rate for a specific pair by ID
+export const reloadFxPairById = async (fxPairs, id) => {
+  return Promise.all(
+    fxPairs.map(async (pair) => {
+      if (pair.id === id) {
+        const newRate = await fetchFxRate(pair.fromCurrency, pair.toCurrency);
+        return { ...pair, rate: newRate, updatedAt: new Date() };
+      }
+      return pair;
+    })
+  );
 };
 
 // Function to sort FX pairs by a given field and direction
