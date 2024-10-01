@@ -1,0 +1,22 @@
+.top-toolbar {
+    position: fixed; /* Fix the toolbar at the top */
+    top: 0;
+    
+    z-index: 1000; /* Ensure it stays above other content */
+}
+
+.dropdown-scroll {
+    max-height: 200px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scroll */
+}
+
+/* Ensure dropdown toggle buttons have a fixed width */
+.dropdown-toggle {
+    min-width: 120px; /* Set a minimum width */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Optional: add some padding to prevent text from being cut off */
+.dropdown-menu {
+    padding: 0;
+}

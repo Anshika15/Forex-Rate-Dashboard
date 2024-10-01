@@ -1,26 +1,28 @@
 import React, { Component } from 'react';
+import { Row, Col } from 'react-bootstrap';
 import FxPairCard from './FxPairCard';
 
 class FxPairsList extends Component {
   render() {
-    const { fxPairs, removeFxPair, swapFxPair, reloadFxPair} = this.props;
+    const { fxPairs, removeFxPair, swapFxPair, reloadFxPair } = this.props;
+
     return (
-      <div>
-        <div className="fx-pairs-list">
+      <div className="fx-pairs-list">
+        <Row>
           {fxPairs.map(pair => (
-            <FxPairCard
-              key={pair.id}
-              pair={pair}
-              removeFxPair={removeFxPair}
-              swapFxPair={swapFxPair}
-              reloadFxPair={reloadFxPair}
-            />
+            <Col key={pair.id} xs={12} sm={6} md={4} className="mb-4">
+              <FxPairCard
+                pair={pair}
+                removeFxPair={removeFxPair}
+                swapFxPair={swapFxPair}
+                reloadFxPair={reloadFxPair}
+              />
+            </Col>
           ))}
-        </div>
+        </Row>
       </div>
     );
   }
 }
-
 
 export default FxPairsList;

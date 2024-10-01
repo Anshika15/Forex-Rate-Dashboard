@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import TopToolbar from './components/TopToolBar/TopToolbar';
+import TopToolbar from './components/Dashboard/TopToolbar';
 import FxPairsList from './components/Dashboard/FxPairsList';
 import { fetchAvailableCurrencies } from './api/currencyApi';
 import { 
@@ -19,6 +19,7 @@ class App extends Component {
     this.state = {
       fxPairs: [], // List of FX pairs
       availableCurrencies: [], // List of available currencies from API
+      currencyMap: {}, // A map that stores the rates of currencies
       sortField: 'createdAt', // Default sort field
       sortDirection: 'asc', // Default sort direction
     };
@@ -28,13 +29,21 @@ class App extends Component {
     this.loadCurrencies();
   }
 
+  // Load currencies and store them in a map
   loadCurrencies = async () => {
-    const currencies = await fetchAvailableCurrencies();
-    this.setState({ availableCurrencies: currencies });
+    const currencyMap  = await fetchAvailableCurrencies();
+    const currencies = Object.keys(currencyMap);
+    this.setState({ availableCurrencies: currencies, currencyMap });
   };
 
+  
   handleAddFxPair = async (fromCurrency, toCurrency) => {
-    const newPairs = await addFxPair(this.state.fxPairs, fromCurrency, toCurrency);
+    const newPairs = await addFxPair(
+      this.state.fxPairs, 
+      fromCurrency, 
+      toCurrency, 
+      this.state.currencyMap
+    );
     this.setState((prevState) => ({
       fxPairs: sortFxPairs(newPairs, prevState.sortField, prevState.sortDirection),
     }));
@@ -48,11 +57,29 @@ class App extends Component {
   };
 
   handleSwapFxPair = (id) => {
-    const updatedPairs = swapFxPairById(this.state.fxPairs, id);
+    const updatedPairs = swapFxPairById(this.state.fxPairs, id, this.state.currencyMap);
+  
+    // Update the state and sort the FX pairs
     this.setState((prevState) => ({
       fxPairs: sortFxPairs(updatedPairs, prevState.sortField, prevState.sortDirection),
     }));
+  
+    return updatedPairs; // Return updated pairs for the child component
   };
+  
+  handleReloadFxPair = async (id) => {
+    const updatedCurrencyMap = await fetchAvailableCurrencies(); // Fetch updated currency data
+
+    const updatedPairs = reloadFxPairById(this.state.fxPairs, id, updatedCurrencyMap);
+    // Update the state with the new currency map and sorted pairs
+    this.setState((prevState) => ({
+      fxPairs: sortFxPairs(updatedPairs, prevState.sortField, prevState.sortDirection),
+      currencyMap: updatedCurrencyMap, // Update the map after reload
+    }));
+  
+    return updatedPairs; // Return updated pairs for the child component
+  };
+  
 
   handleSortChange = (sortField) => {
     const sortDirection = this.state.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -69,13 +96,6 @@ class App extends Component {
     this.setState({ fxPairs: updatedPairs });
   };
 
-  // Reload FX pair by ID (refresh rate) and maintain sort order
-  handleReloadFxPair = async (id) => {
-    const updatedPairs = await reloadFxPairById(this.state.fxPairs, id);
-    this.setState((prevState) => ({
-      fxPairs: sortFxPairs(updatedPairs, prevState.sortField, prevState.sortDirection),
-    }));
-  };
 
   render() {
     const { fxPairs, availableCurrencies, sortField, sortDirection } = this.state;

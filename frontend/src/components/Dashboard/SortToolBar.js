@@ -2,6 +2,7 @@ import { Component } from "react";
 import sortToolBarStrings from "../../local/SortToolBarStrings.json";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { TiArrowUnsorted, TiArrowSortedDown, TiArrowSortedUp} from "react-icons/ti";
+import '../../styles/SortToolBar.css'
 
 class SortToolBar extends Component {
   constructor(props) {

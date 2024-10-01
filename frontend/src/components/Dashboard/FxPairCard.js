@@ -3,12 +3,15 @@ import { Button, Card } from 'react-bootstrap';
 import { FaArrowsUpDown } from "react-icons/fa6";
 import { CiCircleRemove } from "react-icons/ci";
 import { SlReload } from "react-icons/sl";
+import "../../styles/FxPairCard.css"
 
 class FxPairCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       rate: this.props.pair.rate, // Initialize with the provided rate
+      fromAmount: 1, // Default amount for the 'from' currency
+      toAmount: (1 * this.props.pair.rate).toFixed(2), // Calculate the initial amount for 'to' currency
     };
   }
 
@@ -17,31 +20,56 @@ class FxPairCard extends Component {
   };
 
   handleSwap = async () => {
-    // Call the swap function, which returns the updated pair with new rates and swapped currencies
     const updatedPairs = await this.props.swapFxPair(this.props.pair.id);
-    const updatedPair = updatedPairs[0]; // Get the updated pair after swap
-
-    // Update the state with the new rate and render the updated currencies
-    this.setState({
+    const updatedPair = updatedPairs.find(pair => pair.id === this.props.pair.id);
+    
+    this.setState((prevState) => ({
+      fromAmount: prevState.toAmount || '', // Retain empty string if no value
+      toAmount: prevState.fromAmount || '', // Retain empty string if no value
       rate: updatedPair.rate,
-    });
+    }));
   };
 
   handleReload = async () => {
-    const updatedPairs = await this.props.reloadFxPair([this.props.pair], this.props.pair.id);
-    const updatedPair = updatedPairs[0]; // Since we're updating only one pair, get the first element
-    this.setState({ rate: updatedPair.rate }); // Update the state with the new rate
+    const updatedPairs = await this.props.reloadFxPair(this.props.pair.id);
+    const updatedPair = updatedPairs.find(pair => pair.id === this.props.pair.id);
+    
+    this.setState({
+      rate: updatedPair.rate,
+      toAmount: (this.state.fromAmount * updatedPair.rate).toFixed(2) || '', // Maintain as string
+    });
+  };
+
+  handleFromAmountChange = (e) => {
+    const newFromAmount = e.target.value;
+    const parsedFromAmount = parseFloat(newFromAmount) || ''; // Allow empty input
+    const newToAmount = parsedFromAmount !== '' ? (parsedFromAmount * this.state.rate).toFixed(2) : ''; // Update if not empty
+
+    this.setState({
+      fromAmount: newFromAmount,
+      toAmount: newToAmount,
+    });
+  };
+
+  handleToAmountChange = (e) => {
+    const newToAmount = e.target.value;
+    const parsedToAmount = parseFloat(newToAmount) || ''; // Allow empty input
+    const newFromAmount = parsedToAmount !== '' ? (parsedToAmount / this.state.rate).toFixed(2) : ''; // Update if not empty
+
+    this.setState({
+      toAmount: newToAmount,
+      fromAmount: newFromAmount,
+    });
   };
 
   render() {
     const { pair } = this.props;
-    const { rate } = this.state;
+    const { rate, fromAmount, toAmount } = this.state;
 
     return (
       <div className="fx-card">
-        <Card>
+        <Card className="fx-card-container">
           <Card.Body>
-            {/* Top icons for reload and remove with proper spacing */}
             <div className="d-flex justify-content-end align-items-center mb-3">
               <Button variant="link" onClick={this.handleReload} className="me-2">
                 <SlReload size={20} />
@@ -51,28 +79,37 @@ class FxPairCard extends Component {
               </Button>
             </div>
 
-            {/* Swap Icon */}
-            <Card.Title className="text-center">
-              <FaArrowsUpDown onClick={this.handleSwap}s />
-            </Card.Title>
-
             {/* Rate Display */}
-            <Card.Text className="text-center">
-              Rate: {rate}
+            <Card.Text className="text-center" style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+              {rate.toFixed(3)}
             </Card.Text>
 
-            {/* Currency Inputs */} 
-            {/* work pending */}
+            {/* Currency Inputs */}
             <div className="text-center">
-              <input type="number" value="1" readOnly />
-              <span className="ms-2">{pair.fromCurrency}</span>
+              <span className="d-block">{pair.fromCurrency}</span>
               <input
                 type="number"
-                value={(1 * rate).toFixed(2)}
-                readOnly
-                className="ms-2"
+                value={fromAmount}
+                onChange={this.handleFromAmountChange}
+                className="mb-2"
+                style={{ width: '100%', textAlign: 'center' }}
+                min="0" // Prevent negative values
+                step="0.01" // Allow decimal values
               />
-              <span className="ms-2">{pair.toCurrency}</span>
+              <FaArrowsUpDown 
+                onClick={this.handleSwap} 
+                style={{  margin: '1rem 0' }} 
+              />
+              <span className="d-block">{pair.toCurrency}</span>
+              <input
+                type="number"
+                value={toAmount}
+                onChange={this.handleToAmountChange}
+                className="mb-2"
+                style={{ width: '100%', textAlign: 'center' }}
+                min="0" // Prevent negative values
+                step="0.01" // Allow decimal values
+              />
             </div>
           </Card.Body>
         </Card>
