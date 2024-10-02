@@ -4,6 +4,7 @@ import { FaArrowsUpDown } from "react-icons/fa6";
 import { CiCircleRemove } from "react-icons/ci";
 import { SlReload } from "react-icons/sl";
 import "../../styles/FxPairCard.css";
+import fxPairCardStrings from "../../constants/FxPairCardStrings.json";
 
 class FxPairCard extends Component {
   constructor(props) {
@@ -164,10 +165,15 @@ class FxPairCard extends Component {
                 variant="link"
                 onClick={this.handleReload}
                 className="me-2"
+                aria-label="Reload"
               >
                 <SlReload size={20} />
               </Button>
-              <Button variant="danger" onClick={this.handleRemove}>
+              <Button
+                variant="danger"
+                onClick={this.handleRemove}
+                aria-label="Remove"
+              >
                 <CiCircleRemove size={20} />
               </Button>
             </div>
@@ -194,6 +200,7 @@ class FxPairCard extends Component {
               <FaArrowsUpDown
                 onClick={this.handleSwap}
                 style={{ margin: "1rem 0" }}
+                aria-label="Swap"
               />
               <span className="d-block">{pair.toCurrency}</span>
               <input
@@ -204,8 +211,14 @@ class FxPairCard extends Component {
                 className="mb-2"
                 style={{ width: "100%", textAlign: "center" }}
               />
-              <p>updated at: {new Date(pair.updatedAt).toString()}</p>
-              <p>created at: {new Date(pair.createdAt).toString()}</p>
+              <p style={{ margin: "1rem" }}>
+                {fxPairCardStrings.updatedAt}{" "}
+                {new Date(pair.updatedAt).toLocaleString()}
+              </p>
+              <p style={{ margin: "1rem" }}>
+                {fxPairCardStrings.createdAt}{" "}
+                {new Date(pair.createdAt).toLocaleString()}
+              </p>
             </div>
           </Card.Body>
         </Card>

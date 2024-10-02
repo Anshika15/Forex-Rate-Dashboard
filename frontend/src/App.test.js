@@ -1,8 +1,20 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import App from "./App";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+// Mocking child components
+jest.mock("./components/Dashboard/TopToolbar", () => ({ addFxPair }) => (
+  <div>
+    <button onClick={() => addFxPair("USD", "EUR")}>Add FX Pair</button>
+    TopToolbar
+  </div>
+));
+
+describe("App Component", () => {
+  test("renders App component and its main parts", () => {
+    render(<App />);
+
+    // Check if the child components render
+    expect(screen.getByText("TopToolbar")).toBeInTheDocument();
+  });
 });

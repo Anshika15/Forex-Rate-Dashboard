@@ -18,7 +18,7 @@ class SortToolBar extends Component {
     return (
       <div className="sort-controls">
         <Container>
-          <Row className="justify-content-center">
+          <Row>
             <Col md="auto">
               <Button
                 variant={sortField === "createdAt" ? "success" : "light"} // Highlight active button

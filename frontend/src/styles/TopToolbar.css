@@ -1,7 +1,7 @@
 .top-toolbar {
     position: fixed; /* Fix the toolbar at the top */
     top: 0;
-    
+    width:80%;
     z-index: 1000; /* Ensure it stays above other content */
 }
 

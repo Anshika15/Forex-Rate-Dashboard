@@ -40,11 +40,9 @@ class TopToolbar extends Component {
     const { fromCurrency, toCurrency } = this.state;
 
     return (
-      <div className="top-toolbar">
-        {" "}
-        {/* Apply fixed toolbar class */}
+      <div className="top-toolbar mt-3">
         <Container className="bg-light p-3">
-          <Row className="align-items-center justify-content-between">
+          <Row className="align-items-center">
             <Col md="auto">
               <Dropdown>
                 <Dropdown.Toggle
@@ -55,7 +53,6 @@ class TopToolbar extends Component {
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-scroll">
                   {" "}
-                  {/* Apply scrollable dropdown class */}
                   {availableCurrencies.map((currency) => (
                     <Dropdown.Item
                       key={currency}
@@ -78,7 +75,6 @@ class TopToolbar extends Component {
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-scroll">
                   {" "}
-                  {/* Apply scrollable dropdown class */}
                   {availableCurrencies.map((currency) => (
                     <Dropdown.Item
                       key={currency}
@@ -92,7 +88,11 @@ class TopToolbar extends Component {
             </Col>
 
             <Col md="auto">
-              <Button variant="primary" onClick={this.handleAddFxPair}>
+              <Button
+                variant="primary"
+                onClick={this.handleAddFxPair}
+                aria-label="Add Card"
+              >
                 {topToolBarStrings.addCard}
               </Button>
             </Col>

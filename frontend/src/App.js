@@ -13,7 +13,7 @@ import {
 } from "./services/FxPairService";
 import { Container, Row, Col, Modal, Button } from "react-bootstrap"; // Added Modal and Button
 import SortToolBar from "./components/Dashboard/SortToolBar";
-import ErrorBoundary from "./components/Dashboard/ErrorBoundary";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 class App extends Component {
   constructor(props) {
